@@ -25,7 +25,7 @@ const login = async (data) => {
 
 const register = async (data) => {
   try {
-    const { name, password, address, email, phone, roles } = data;
+    const { name, password, address, email, phone } = data;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -34,7 +34,6 @@ const register = async (data) => {
       address,
       email,
       phone,
-      roles,
     });
 
     // Modify the user object before saving (optional) This is the advantage of making new instance of user and saving
