@@ -5,7 +5,8 @@ import userRoutes from "./routes/userRoute.js";
 import authRoutes from "./routes/authRoute.js";
 import dbConnect from "./config/database.js";
 import bodyParser from "body-parser";
-import logger from "../middleware/logger.js";
+import logger from "./middlewares/logger.js";
+import auth from "./middlewares/auth-middleware.js";
 
 const app = express();
 dotenv.config();
@@ -34,7 +35,7 @@ app.use(
   },
   productRoutes
 );
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", auth, authRoutes);
 app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT || 5000;

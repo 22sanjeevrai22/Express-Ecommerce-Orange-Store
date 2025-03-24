@@ -1,5 +1,6 @@
 import { formatUserData } from "../../helpers/dataFormatter.js";
 import authService from "../services/authService.js";
+import { createJWT } from "../utils/jwt.js";
 import {
   EMAIL_REGEX,
   PASSWORD_REGEX,
@@ -16,10 +17,13 @@ const loginController = async (req, res) => {
     if (!password) return res.status(422).send("Password is required!");
 
     const user = await authService.login(data);
+    const formattedData = formatUserData(user);
 
-    res
-      .status(200)
-      .json({ message: "Login Successful!!", user: formatUserData(user) });
+    const token = createJWT(formattedData);
+    res.cookie("authToken", token);
+    console.log("token", token);
+
+    res.status(200).json({ message: "Login Successful!!", formattedData });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -52,12 +56,10 @@ const registerController = async (req, res) => {
     }
 
     const user = await authService.register(req.body);
-    return res
-      .status(201)
-      .json({
-        message: "Registration Successful!",
-        user: formatUserData(user),
-      });
+    return res.status(201).json({
+      message: "Registration Successful!",
+      user: formatUserData(user),
+    });
   } catch (error) {
     let statusCode = 500;
     let errorMessage = "Internal Server Error";
